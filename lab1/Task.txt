@@ -1,0 +1,14 @@
+The purpose of task is to explore the data quality and understand their distribution, measure characteristics. 
+Sometimes this task is known as exploratory data analysis (EDA)
+
+Steps to be done and result provided:
+(1) determine data type (categorical, binary, numerical, ...), characterize them by displaying graphically (histogram, pie, time series, ...). Choose at least 2 numerical and at least 2 categorical features to explore
+	- data quality report: table and graphs
+(2) explore the quality of data: find outliers and make decision about them, find missing values if any, determine the cardinality
+	- data quality report (append it): table and graphs
+(3) explore the shape of distribution. Perform standardization and normalization, consider the normality of data 
+	- graphs and description of actions done
+(4) explore the characteristics of features: central tendency, spread measures and dependency (the technique depends on which data type you have)
+	- table of characteristics
+(5) append the data set with two derived features of different types (at least 2 out of 4)
+	- description of new features (types, characterics, distribution)
