@@ -17,12 +17,10 @@ def ReadInitialData(dataFile):
 
 def DrawBarChart(objectList, dataList, yLabel, title):
     y_pos = np.arange(len(objectList))
-    
     plt.bar(y_pos, dataList, align='center', alpha=0.5)
     plt.xticks(y_pos, objectList)
     plt.ylabel(yLabel)
     plt.title(title)
-    
     plt.show()
     
 def __main__():
