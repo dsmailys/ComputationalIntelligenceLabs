@@ -34,6 +34,4 @@ def __main__():
     nonCardHolder = sum(1 for item in data if item.CC_CARD == '0')
     DrawBarChart(("CreditCard", "Cash"), (cardHolderCount, nonCardHolder), "Usage", "Credit card usage")
 
-    
-
 __main__()
