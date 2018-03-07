@@ -10,13 +10,19 @@ import Constants
 
 def ReadInitialData(dataFile):
     data_list = []
-    with open(dataFile, 'rt', encoding="ascii") as csv_file:
+    with open(dataFile, 'rt') as csv_file:
         reader = csv.reader(csv_file)
         next(reader, None)  # Skip the header.
         # Unpack the row directly in the head of the for loop.
         for line in reader:
             data_list.append(CampaignDetails(line))
     return data_list
+
+def PrintData(header, data, fileName):
+    with open(fileName, 'w+') as outliersFile:
+        outliersFile.write(header + "\n")
+        for item in data:
+            outliersFile.write(str(item) + ", ")
 
 def DrawBarChart(objectList, dataList, yLabel, title, showPlot = True):
     y_pos = np.arange(len(objectList))
@@ -41,13 +47,15 @@ def DrawHistogram (dataList, title, yLabel, xLabel, norm, axisConfig, showPlot =
 def FindOutliers (dataList):
     mean = np.mean (dataList)
     sd = np.std(dataList)
-    return sorted(set((list(x for x in dataList if (x < mean - 2 * sd or x > mean + 2 * sd)))))
-
-def PrintList (dataList):
-    for item in dataList:
-        print (item)
-
-
+    outliers = []
+    nonOutliers = []
+    for x in dataList:
+        if x < mean - 2 * sd or x > mean + 2 * sd:
+            outliers.append(x)
+        else:
+            nonOutliers.append(x)
+    outliers = sorted(outliers)
+    return outliers, nonOutliers           
 
 def FindMissingValues (dataList):
     missingCount = 0
@@ -62,12 +70,9 @@ def PrintTable (headers, rows):
         table.add_row(row)
     print (table)
 
-
-
 def __main__():
     #read initial data set
     data = ReadInitialData(Constants.DATA_FILE)
-
     
     cardHolderData = ["Card holder"]
     webShopperData = ["Web shopper"]
@@ -95,18 +100,20 @@ def __main__():
     responded = list(int(item.RESPONDED) for item in data if not item == "")
     promotionsRespondedData.append(len(responded))
     DrawHistogram(responded, "Number of responded promotions last year", "Frequency", "Responded amount", 30, [0, 10, 0, 12000], True)
+    
+    plt.boxplot(responded, whis = 3, labels=["Number of respondents to promotion"])
+    plt.show()
 
     # finding outliers for average spent
     elements = list(float(item.AVRG) for item in data)
-    outliers = FindOutliers (elements)
-    print ("Outliers for average spent: ")
-    print(outliers)
+    outliers, normalizedDataAverageSpent = FindOutliers (elements)
+    PrintData("Outliers for average amount spent", outliers, Constants.OUTLIERS_FILE)
+    averageOutliersPercentage = float(len(outliers)) / len(elements) * 100
 
     #finding outliers for promotions responded last year
     elements = list(int(item.RESPONDED) for item in data)
-    outliers = FindOutliers (elements)
-    print ("Outliers for promotions responded last year")
-    print (outliers)
+    outliers, normalizedDataPromotions = FindOutliers (elements)
+    promotionsOutliersPercentage = float(len(outliers)) / len(elements) * 100
 
     #finding missing values for average spent
     averageSpentMissing = FindMissingValues ((item.AVRG for item in data))
@@ -138,11 +145,32 @@ def __main__():
     # finding cardinality for credit card holders
     cardHolderData.append(2)
 
+    # adding outliers
+    promotionsRespondedData.append(round(promotionsOutliersPercentage, 2))
+    avarageSpentData.append(round(averageOutliersPercentage, 2))
+
+    # normalized data means
+    meanofNormalizedAverageSpent = np.mean(normalizedDataAverageSpent)
+    avarageSpentData.append(round(meanofNormalizedAverageSpent, 2))
+
+    meanofNormalizedPromotions = np.mean(normalizedDataPromotions)
+    promotionsRespondedData.append(round(meanofNormalizedPromotions, 2))
+
+    #normalized data range
+    minOfNormalizedAverageSpent = min(normalizedDataAverageSpent)
+    minOfNormalizedPromotions = min(normalizedDataPromotions)
+
+    maxOfNormalizedAverageSpen = max(normalizedDataAverageSpent)
+    maxOfNormalizedPromotions = max(normalizedDataPromotions)
+
+    promotionsRespondedData.append(maxOfNormalizedPromotions - minOfNormalizedPromotions)
+    avarageSpentData.append(maxOfNormalizedAverageSpen - minOfNormalizedAverageSpent)
+
     print("Categorical features:")
     PrintTable(["Feature", "Count", "Miss. %", "Card."], [webShopperData, cardHolderData])
 
     print("Continuous features:")    
-    PrintTable(["Feature", "Count", "Miss. %", "Card."], [promotionsRespondedData, avarageSpentData])
+    PrintTable(["Feature", "Count", "Miss. %", "Card.", "Outliers %", "Mean", "Range"], [promotionsRespondedData, avarageSpentData])
 
 
 # TODO: 
@@ -152,5 +180,9 @@ def __main__():
 # 	- table of characteristics
 # (5) append the data set with two derived features of different types (at least 2 out of 4)
 # 	- description of new features (types, characterics, distribution)
+# Calculate carculation for numerical features
+# Calculate moda for categorical features
+# Refactor code
+# Make a report of labs
 
 __main__()
