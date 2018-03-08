@@ -50,10 +50,10 @@ def __main__():
     RespondedPromotionsData.DrawBoxPlot(3, ["Number of respondents to promotion"])    
 
     print("Categorical features:")
-    PrintTable(["Feature", "Count", "Miss. %", "Card."], [WebShopperData.GetFeatureSet(), CardHolderData.GetFeatureSet()])
+    PrintTable(CategoricalData.GetFeatureNames(), [WebShopperData.GetFeatureSet(), CardHolderData.GetFeatureSet()])
 
     print("Continuous features:")    
-    PrintTable(["Feature", "Count", "Miss. %", "Card.", "Outliers %", "Mean", "Range"], [AverageSpentData.GetFeatureSet(), RespondedPromotionsData.GetFeatureSet()])
+    PrintTable(NumericalData.GetFeatureNames(), [AverageSpentData.GetFeatureSet(), RespondedPromotionsData.GetFeatureSet()])
 
 
 # TODO: 
@@ -64,7 +64,6 @@ def __main__():
 # (5) append the data set with two derived features of different types (at least 2 out of 4)
 # 	- description of new features (types, characterics, distribution)
 # Calculate corelation for numerical features
-# Calculate moda for categorical features
 # Make a report of labs
 
 __main__()

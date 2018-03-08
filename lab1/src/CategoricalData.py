@@ -1,6 +1,5 @@
 import numpy as np
 import matplotlib.pyplot as plt
-
 from BaseData import BaseData
 
 class CategoricalData(BaseData):
@@ -23,10 +22,17 @@ class CategoricalData(BaseData):
         plt.title(title)
         plt.show()
 
+    def GetMode(self):
+        return max(set(self.data), key=self.data.count)
+
+    def GetFeatureNames():
+        return ["Feature", "Count", "Miss. %", "Card.", "Mode"]
+
     def GetFeatureSet(self):
         features = []
         features.append(self.name)
-        features.append(BaseData.GetDataLength(self))
-        features.append(float(BaseData.FindMissingCount(self)) / BaseData.GetDataLength(self) * 100)
-        features.append(BaseData.GetDataCardinality(self))
+        features.append(self.GetDataLength())
+        features.append(float(self.FindMissingCount()) / self.GetDataLength() * 100)
+        features.append(self.GetDataCardinality())
+        features.append(self.GetMode())
         return features

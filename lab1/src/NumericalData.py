@@ -50,12 +50,15 @@ class NumericalData(BaseData):
     def GetRangeOfNormalized(self):
         return max(self.GetNormalizedData()) - min(self.GetNormalizedData())
 
+    def GetFeatureNames():
+        return ["Feature", "Count", "Miss. %", "Card.", "Outliers %", "Mean", "Range"]
+
     def GetFeatureSet(self):
         features = []
         features.append(self.name)
-        features.append(BaseData.GetDataLength(self))
-        features.append(float(BaseData.FindMissingCount(self)) / BaseData.GetDataLength(self) * 100)
-        features.append(BaseData.GetDataCardinality(self))
+        features.append(self.GetDataLength())
+        features.append(float(self.FindMissingCount()) / self.GetDataLength() * 100)
+        features.append(self.GetDataCardinality())
         features.append(round(self.GetOutliersPercentage(), 2))
         features.append(round(self.GetMeanOfNormalized(), 2))
         features.append(self.GetRangeOfNormalized())
