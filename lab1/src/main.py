@@ -1,5 +1,7 @@
 import csv
 import prettytable
+import matplotlib
+import matplotlib.pyplot as plt
 
 from CampaignDetails import CampaignDetails
 from CategoricalData import CategoricalData
@@ -48,6 +50,7 @@ def __main__():
     RespondedPromotionsData = NumericalData(list(int(item.RESPONDED) for item in data), "Responded Promotions")
     RespondedPromotionsData.DrawHistogram("Number of responded promotions last year", "Frequency", "Responded amount", 30, [0, 10, 0, 12000])
     RespondedPromotionsData.DrawBoxPlot(3, ["Number of respondents to promotion"])    
+   
 
     print("Categorical features:")
     PrintTable(CategoricalData.GetFeatureNames(), [WebShopperData.GetFeatureSet(), CardHolderData.GetFeatureSet()])
@@ -55,6 +58,14 @@ def __main__():
     print("Continuous features:")    
     PrintTable(NumericalData.GetFeatureNames(), [AverageSpentData.GetFeatureSet(), RespondedPromotionsData.GetFeatureSet()])
 
+    #correlation between AverageSpentData and RespondedPromotionsData
+    matplotlib.style.use('ggplot')
+    plt.scatter(AverageSpentData.data, RespondedPromotionsData.data)
+    plt.show()
+    coef = AverageSpentData.GetCorrelationCoef(RespondedPromotionsData.data)[0, 1]
+    print("Correlation coefficient between 'Average spent' and 'Number of respondents to promotion': " + str(coef))
+
+    
 
 # TODO: 
 # (3) explore the shape of distribution. Perform standardization and normalization, consider the normality of data 

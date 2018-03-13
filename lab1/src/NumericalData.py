@@ -50,6 +50,9 @@ class NumericalData(BaseData):
     def GetRangeOfNormalized(self):
         return max(self.GetNormalizedData()) - min(self.GetNormalizedData())
 
+    def GetCorrelationCoef(self, data):
+        return np.corrcoef(self.data, data)
+
     def GetFeatureNames():
         return ["Feature", "Count", "Miss. %", "Card.", "Outliers %", "Mean", "Range"]
 
