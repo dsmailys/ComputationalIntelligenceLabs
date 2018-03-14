@@ -1,3 +1,4 @@
+import matplotlib
 import matplotlib.pyplot as plt
 import numpy as np
 
@@ -20,6 +21,14 @@ class NumericalData(BaseData):
 
     def DrawBoxPlot(self, whisNumber, xAxisLabel):
         plt.boxplot(BaseData.GetData(self), whis = whisNumber, labels=xAxisLabel)
+        plt.show()
+
+    def DrawScatterPlot(self, title, yLabel, xLabel, data):
+        matplotlib.style.use('ggplot')
+        plt.scatter(self.data, data)
+        plt.ylabel(yLabel)
+        plt.xlabel(xLabel)
+        plt.title(title)
         plt.show()
 
     def __FindOutliers (self):

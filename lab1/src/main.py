@@ -1,7 +1,5 @@
 import csv
 import prettytable
-import matplotlib
-import matplotlib.pyplot as plt
 
 from CampaignDetails import CampaignDetails
 from CategoricalData import CategoricalData
@@ -59,22 +57,26 @@ def __main__():
     PrintTable(NumericalData.GetFeatureNames(), [AverageSpentData.GetFeatureSet(), RespondedPromotionsData.GetFeatureSet()])
 
     #correlation between AverageSpentData and RespondedPromotionsData
-    matplotlib.style.use('ggplot')
-    plt.scatter(AverageSpentData.data, RespondedPromotionsData.data)
-    plt.show()
+    AverageSpentData.DrawScatterPlot("Correlation", "Number of respondents to promotion", "Average spent", RespondedPromotionsData.data)
     coef = AverageSpentData.GetCorrelationCoef(RespondedPromotionsData.data)[0, 1]
     print("Correlation coefficient between 'Average spent' and 'Number of respondents to promotion': " + str(coef))
 
+    #calculate new feature from responded group
+    def getCategory(item):
+        if int(item) < 2:
+            return "0"
+        if int(item) < 8:
+            return "1"
+        return "2"
+    
+    RespondedToPromotionsCategoricalData = CategoricalData(list(map(getCategory, RespondedPromotionsData.data)), "Response strength")
+    RespondedToPromotionsCategoricalData.DrawBarChart(("none or weak", "medium", "strong"), ["0", "1", "2"], "Number of responses", "Response strength")
     
 
+
+
 # TODO: 
-# (3) explore the shape of distribution. Perform standardization and normalization, consider the normality of data 
-# 	- graphs and description of actions done
-# (4) explore the characteristics of features: central tendency, spread measures and dependency (the technique depends on which data type you have)
-# 	- table of characteristics
-# (5) append the data set with two derived features of different types (at least 2 out of 4)
-# 	- description of new features (types, characterics, distribution)
-# Calculate corelation for numerical features
-# Make a report of labs
+# derive one more feature
+# Make a report of labs link: https://docs.google.com/document/d/1-zbwE8rgsRiNrSc1DGPN47sBmlfxy7hx1pXFY2gUfqI/edit?usp=sharing
 
 __main__()
