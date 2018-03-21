@@ -25,7 +25,7 @@ class CategoricalData(BaseData):
     def GetMode(self):
         return max(set(self.data), key=self.data.count)
 
-    def GetFeatureNames():
+    def GetFeatureNames(self):
         return ["Feature", "Count", "Miss. %", "Card.", "Mode"]
 
     def GetFeatureSet(self):

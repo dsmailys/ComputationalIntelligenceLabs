@@ -62,7 +62,7 @@ class NumericalData(BaseData):
     def GetCorrelationCoef(self, data):
         return np.corrcoef(self.data, data)
 
-    def GetFeatureNames():
+    def GetFeatureNames(self):
         return ["Feature", "Count", "Miss. %", "Card.", "Outliers %", "Mean", "Range"]
 
     def GetFeatureSet(self):

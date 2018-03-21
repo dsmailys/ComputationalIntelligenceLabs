@@ -51,10 +51,10 @@ def __main__():
    
 
     print("Categorical features:")
-    PrintTable(CategoricalData.GetFeatureNames(), [WebShopperData.GetFeatureSet(), CardHolderData.GetFeatureSet()])
+    PrintTable(CardHolderData.GetFeatureNames(), [WebShopperData.GetFeatureSet(), CardHolderData.GetFeatureSet()])
 
     print("Continuous features:")    
-    PrintTable(NumericalData.GetFeatureNames(), [AverageSpentData.GetFeatureSet(), RespondedPromotionsData.GetFeatureSet()])
+    PrintTable(AverageSpentData.GetFeatureNames(), [AverageSpentData.GetFeatureSet(), RespondedPromotionsData.GetFeatureSet()])
 
     #correlation between AverageSpentData and RespondedPromotionsData
     AverageSpentData.DrawScatterPlot("Correlation", "Number of respondents to promotion", "Average spent", RespondedPromotionsData.data)
@@ -73,8 +73,8 @@ def __main__():
     RespondedToPromotionsCategoricalData.DrawBarChart(("none or weak", "medium", "strong"), ["0", "1", "2"], "Number of responses", "Response strength")
     
 
-
-
+# median +- (1.5*IQR (inter quartile range)) Boxplot outliers exponentiniam
+# Pearson correleaton kai normal distribution, kitaip naudoti Spearman arba Kendall.
 # TODO: 
 # derive one more feature
 # Make a report of labs link: https://docs.google.com/document/d/1-zbwE8rgsRiNrSc1DGPN47sBmlfxy7hx1pXFY2gUfqI/edit?usp=sharing
