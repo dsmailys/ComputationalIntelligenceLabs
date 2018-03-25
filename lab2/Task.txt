@@ -1,0 +1,28 @@
+The purpose of this task is to create the classifier (prediction model) using information based learning algorithm (decision trees and its modification), as well as to validate model's generated predictions for your target feature using a test dataset.
+
+Steps to be done and result provided:
+(1) split the given dataset (n) into two different samples: training dataset and testing data set. For example, choose randomly 10% of records from given dataset for testing (0,9n records in training dataset, 0,1n records in testing data set). 
+	- provide the code and sample sizes after splitting given dataset
+	- check the proportion of class variable in both training dataset and testing dataset
+ (2) choose the algorithm (IDR, CART, C4.5 or C5.0) for creating decision trees
+	- provide summary about the algorithm and clarify requirements on dataset (features) invoked by the algorithm
+(3) use at least two categorical features and at least two continuous features (from 1st lab) to create a decision tree
+	- provide what data preparation steps (if any) were performed before learning the algorithm
+	- provide summary of output of learning 
+	- display decision tree graphically
+	- make predictions using testing data set and test the predictions on target feature (using mean values for actual values (yes/no) and predicted values (yes/no), as well as cross tabulation (confusion matrix))
+(4) use at least two categorical features, at least two continuous features and at least two derived features (from 1st lab) to create a decision tree
+	- provide what data preparation steps (if any) were performed before learning the algorithm
+	- provide summary of output of learning 
+	- display decision tree graphically
+	- make predictions using testing data set and test the predictions on target feature (using mean values for actual values (yes/no) and predicted values (yes/no), as well as cross tabulation (confusion matrix))
+(5) use all features you have in your data set in order to create a classifier of decision tree
+	- provide what data preparation steps (if any) were performed before learning the algorithm
+	- provide summary of output of learning 
+	- display decision tree graphically
+	- make predictions using testing data set and test the predictions on target feature (using mean values for actual values (yes/no) and predicted values (yes/no), as well as cross tabulation (confusion matrix))
+(6) perform a modification of learning algorithm by implementing pruning or creating model ensemble (using boosting or bagging (random forest) technique)
+	- provide what data preparation steps (if any) were performed before learning the algorithm
+	- provide summary of output of learning 
+	- display decision tree graphically
+	- make predictions using testing data set and test the predictions on target feature (using mean values for actual values (yes/no) and predicted values (yes/no), as well as cross tabulation (confusion matrix))
