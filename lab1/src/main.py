@@ -22,13 +22,27 @@ def PrintData(header, data, fileName):
         for item in data:
             outliersFile.write(str(item) + ", ")           
 
+def PrintCSVData(columns, data, fileName):
+    with open(fileName, 'w+') as fout:
+        fout.write(",".join(columns) + "\n")
+        for item in data:
+            fout.write(",".join([ str(getattr(item, col)) for col in columns ])+ "\n")  
+
 def PrintTable (headers, rows):
     table = prettytable.PrettyTable(headers)
     for row in rows:
         table.add_row(row)
     print (table)
 
+def AppendNewDataColumn(data, colName, colData):
+    if len(data) != len(colData):
+        raise Exception('data and colData lengths do not match')
+
+    for i in range(0, len(data)):
+        setattr(data[i], colName, colData[i])
+
 def __main__():
+    dataColumns = ["HHKEY", "ZIP_CODE", "REC", "FRE", "MON", "CC_CARD", "AVRG", "PC_CALC20", "PSWEATERS", "PKNIT_TOPS", "PKNIT_DRES","PBLOUSES","PJACKETS","PCAR_PNTS","PCAS_PNTS","PSHIRTS","PDRESSES","PSUITS","POUTERWEAR","PJEWELRY","PFASHION","PLEGWEAR","PCOLLSPND","AMSPEND","PSSPEND","CCSPEND","AXSPEND","TMONSPEND","OMONSPEND","SMONSPEND","PREVPD","GMP","PROMOS","DAYS","FREDAYS","MARKDOWN","CLASSES","COUPONS","STYLES","STORES","STORELOY","VALPHON","WEB","MAILED","RESPONDED","RESPONSERATE","HI","LTFREDAY","CLUSTYPE","PERCRET","RESP"]
     data = ReadInitialData(Constants.DATA_FILE)
 
     # calculate categorical value for credit card holder
@@ -61,6 +75,9 @@ def __main__():
     coef = AverageSpentData.GetCorrelationCoef(RespondedPromotionsData.data)[0, 1]
     print("Correlation coefficient between 'Average spent' and 'Number of respondents to promotion': " + str(coef))
 
+    #remove outliers
+    AverageSpentData.RemoveOutlierRows(data)
+
     #calculate new feature from responded group
     def getCategory(item):
         if int(item) < 2:
@@ -69,7 +86,7 @@ def __main__():
             return "1"
         return "2"
     
-    RespondedToPromotionsCategoricalData = CategoricalData(list(map(getCategory, RespondedPromotionsData.data)), "Response strength")
+    RespondedToPromotionsCategoricalData = CategoricalData(list(map(getCategory, list(int(item.RESPONDED) for item in data))), "Response strength")
     RespondedToPromotionsCategoricalData.DrawBarChart(("none or weak", "medium", "strong"), ["0", "1", "2"], "Number of responses", "Response strength")
 
     #calculate new feature from average spent
@@ -81,9 +98,17 @@ def __main__():
             return "1"
         return "2"
     
-    AverageSpentCategoricalData = CategoricalData(list(map(getCategoryForAvrg, AverageSpentData.data)), "Spending category")
+    AverageSpentCategoricalData = CategoricalData(list(map(getCategoryForAvrg, list(float(item.AVRG) for item in data))), "Spending category")
     AverageSpentCategoricalData.DrawBarChart(("small", "medium", "strong"), ["0", "1", "2"], "Number of spendings", "Spending strength")
-    
+
+    # add new features to data set
+    AppendNewDataColumn(data, "derived_RESPONSE_TO_PROMOTION", RespondedToPromotionsCategoricalData.data)
+    dataColumns.append("derived_RESPONSE_TO_PROMOTION")
+    AppendNewDataColumn(data, "derived_AVERAGE_SPENT", AverageSpentCategoricalData.data)
+    dataColumns.append("derived_AVERAGE_SPENT")
+
+    # print new data set
+    PrintCSVData(dataColumns, data, Constants.PROCESSED_DATA_FILE)
 
 # median +- (1.5*IQR (inter quartile range)) Boxplot outliers exponentiniam
 # Pearson correleaton kai normal distribution, kitaip naudoti Spearman arba Kendall.

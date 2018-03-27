@@ -8,7 +8,7 @@ class NumericalData(BaseData):
     def __init__(self, dataList, printedName):
         BaseData.__init__(self, dataList)
         self.name = printedName
-        self.outliers, self.nonOutliers = self.__FindOutliers()
+        self.outliers, self.nonOutliers, self.outlierRows = self.__FindOutliers()
 
     def DrawHistogram (self, title, yLabel, xLabel, norm, axisConfig):
         plt.hist (BaseData.GetData(self), norm)
@@ -36,17 +36,26 @@ class NumericalData(BaseData):
         sd = np.std(BaseData.GetData(self))
         outliers = []
         nonOutliers = []
+        outlierRows = []
+        i = 0
         for x in BaseData.GetData(self):
             if x < mean - 2 * sd or x > mean + 2 * sd:
                 outliers.append(x)
+                outlierRows.append(i)
             else:
                 nonOutliers.append(x)
+            i = i + 1
+
         outliers = sorted(outliers)
-        return outliers, nonOutliers
+        return outliers, nonOutliers, outlierRows
 
     def GetOutliersPercentage(self):
         return float(len(self.outliers)) / BaseData.GetDataLength(self) * 100
     
+    def RemoveOutlierRows(self, arr):
+        for i in sorted(self.outlierRows, reverse=True):
+            arr.pop(i)
+
     def GetOutliers(self):
         return self.outliers
     
