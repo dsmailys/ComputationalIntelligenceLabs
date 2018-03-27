@@ -71,12 +71,23 @@ def __main__():
     
     RespondedToPromotionsCategoricalData = CategoricalData(list(map(getCategory, RespondedPromotionsData.data)), "Response strength")
     RespondedToPromotionsCategoricalData.DrawBarChart(("none or weak", "medium", "strong"), ["0", "1", "2"], "Number of responses", "Response strength")
+
+    #calculate new feature from average spent
+
+    def getCategoryForAvrg(item):
+        if int(item) < 50:
+            return "0"
+        if int(item) < 200:
+            return "1"
+        return "2"
+    
+    AverageSpentCategoricalData = CategoricalData(list(map(getCategoryForAvrg, AverageSpentData.data)), "Spending category")
+    AverageSpentCategoricalData.DrawBarChart(("small", "medium", "strong"), ["0", "1", "2"], "Number of spendings", "Spending strength")
     
 
 # median +- (1.5*IQR (inter quartile range)) Boxplot outliers exponentiniam
 # Pearson correleaton kai normal distribution, kitaip naudoti Spearman arba Kendall.
 # TODO: 
-# derive one more feature
 # Make a report of labs link: https://docs.google.com/document/d/1-zbwE8rgsRiNrSc1DGPN47sBmlfxy7hx1pXFY2gUfqI/edit?usp=sharing
 
 __main__()
