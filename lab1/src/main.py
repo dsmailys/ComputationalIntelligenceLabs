@@ -45,6 +45,9 @@ def __main__():
     dataColumns = ["HHKEY", "ZIP_CODE", "REC", "FRE", "MON", "CC_CARD", "AVRG", "PC_CALC20", "PSWEATERS", "PKNIT_TOPS", "PKNIT_DRES","PBLOUSES","PJACKETS","PCAR_PNTS","PCAS_PNTS","PSHIRTS","PDRESSES","PSUITS","POUTERWEAR","PJEWELRY","PFASHION","PLEGWEAR","PCOLLSPND","AMSPEND","PSSPEND","CCSPEND","AXSPEND","TMONSPEND","OMONSPEND","SMONSPEND","PREVPD","GMP","PROMOS","DAYS","FREDAYS","MARKDOWN","CLASSES","COUPONS","STYLES","STORES","STORELOY","VALPHON","WEB","MAILED","RESPONDED","RESPONSERATE","HI","LTFREDAY","CLUSTYPE","PERCRET","RESP"]
     data = ReadInitialData(Constants.DATA_FILE)
 
+    TargetFeature = CategoricalData(list(item.RESP for item in data), "Responded")
+    TargetFeature.DrawBarChart(("Responded", "Not"), ["1", "0"], "Responding", "Responding to promotions")
+
     # calculate categorical value for credit card holder
     CardHolderData = CategoricalData(list(item.CC_CARD for item in data), "Card holder")
     CardHolderData.DrawBarChart(("CreditCard", "Cash"), ["1", "0"], "Usage", "Credit card usage")
