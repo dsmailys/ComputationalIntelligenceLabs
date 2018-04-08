@@ -114,6 +114,4 @@ def __main__():
 #prediction kaip gavome??
 
 # Lab2 Report link: https://docs.google.com/document/d/1SWtKXVoKqoz7XgTmn5he2f8zm2Z3e508Rk_c8y3y82M/edit?usp=sharing
-# TODO: balance target value RESP
-# TODO: visualize trees with bagging and forest
 __main__()
