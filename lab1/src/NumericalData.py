@@ -1,6 +1,9 @@
 import matplotlib
 import matplotlib.pyplot as plt
 import numpy as np
+import scipy
+import scipy.stats
+from scipy.stats import spearmanr
 
 from BaseData import BaseData
 
@@ -70,6 +73,9 @@ class NumericalData(BaseData):
 
     def GetCorrelationCoef(self, data):
         return np.corrcoef(self.data, data)
+    
+    def GetSpearmanCorrealtion(self, data):
+        return spearmanr(self.data, data)
 
     def GetFeatureNames(self):
         return ["Feature", "Count", "Miss. %", "Card.", "Outliers %", "Mean", "Range"]

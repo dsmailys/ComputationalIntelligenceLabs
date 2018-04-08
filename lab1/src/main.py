@@ -64,7 +64,7 @@ def __main__():
     #number of RESPONDED promotions last year
     RespondedPromotionsData = NumericalData(list(int(item.RESPONDED) for item in data), "Responded Promotions")
     RespondedPromotionsData.DrawHistogram("Number of responded promotions last year", "Frequency", "Responded amount", 30, [0, 10, 0, 12000])
-    RespondedPromotionsData.DrawBoxPlot(3, ["Number of respondents to promotion"])    
+    RespondedPromotionsData.DrawBoxPlot(1.5, ["Number of respondents to promotion"])    
    
 
     print("Categorical features:")
@@ -76,7 +76,9 @@ def __main__():
     #correlation between AverageSpentData and RespondedPromotionsData
     AverageSpentData.DrawScatterPlot("Correlation", "Number of respondents to promotion", "Average spent", RespondedPromotionsData.data)
     coef = AverageSpentData.GetCorrelationCoef(RespondedPromotionsData.data)[0, 1]
-    print("Correlation coefficient between 'Average spent' and 'Number of respondents to promotion': " + str(coef))
+    spearmanCoef = AverageSpentData.GetSpearmanCorrealtion(RespondedPromotionsData.data).correlation
+    print("Correlation coefficient between 'Average spent' and 'Number of respondents to promotion' using Pearson: " + str(coef))
+    print("Correlation coefficient between 'Average spent' and 'Number of respondents to promotion' using Spearman: " + str(spearmanCoef))
 
     #remove outliers
     AverageSpentData.RemoveOutlierRows(data)
