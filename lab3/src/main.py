@@ -16,6 +16,7 @@ def CalculateRatio(data, feature, val1, val2):
     dataLen = len(data)
     valLen1 = len(data.loc[data[feature] == val1])
     valLen2 = len(data.loc[data[feature] == val2])
+    print ("Feature " + feature)
     print("Value " + str(val1) + " and " + str(val2) + " ratio - " + str(round(float(valLen1) / dataLen, 2)) + ":" +  str(round(float(valLen2) / dataLen, 2)))
 
 def Drop(data, feature, value, percentage):
@@ -101,4 +102,5 @@ def __main__():
     DoRuns("Categorical", ['WEB',  'CC_CARD'], 'RESP', training_data, test_data)
     DoRuns("Mixed", ['WEB',  'CC_CARD', 'RESPONDED',  'AVRG'], 'RESP', training_data, test_data)
     # TODO: make lab3 report
+    # https://docs.google.com/document/d/1JMO2iZFIIGlOCF70O3tbLZR1Fm_fx7HPoC-w-ISUs6I/
 __main__()
