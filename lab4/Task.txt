@@ -1,0 +1,13 @@
+The purpose of this task is to create the classifier (prediction model) using similarity based learning algorithm (k Nearest Neighbour algorithm and its modification), as well as to validate model's generated predictions for your target feature using a test dataset.
+
+Steps to be done and results provided:
+(1) split the given dataset (n) into two different samples: training dataset and testing data set (skip this step if it already done). For example, choose randomly 10% of records from given dataset for testing (0,9n records in training dataset, 0,1n records in testing data set). 
+	- check the proportion of class variable in both training dataset and testing dataset
+(2) apply k Nearest Neighbour algorithm to learn a model using the training dataset under conditions:
+	(2.1) choose only numeric features and manipulate the number of nearest neighbours, as well as try two different distances for measuring the similarity
+	(2.2) choose only categorical features and manipulate the number of nearest neighbours, as well as try two different indices for measuring the similarity
+	(2.3) choose mixed combination (numeric and categorical) of features and manipulate the number of nearest neighbours, as well as try two different criteria for measuring the similarity
+For each case (2.1)-(2.3), provide summary of output of learning, make predictions using testing dataset and validate the predictions on target feature (using mean values for actual values (yes/no) and predicted values (yes/no), as well as cross tabulation (confusion matrix))
+Provide summary about the prediction results for different number of neighbours and distinct similarity criteria
+
+p.s. additional task: compare predictions obtained using decision tree algorithm
