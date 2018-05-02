@@ -43,7 +43,30 @@ def SplitDataByProportion (data, training_proportion, test_proportion):
     testData = data[int(trainingCount):int(totalLength)]
     return trainingData, testData
 
-def RunTraining(classifier, columns, resultCol, trainingData, testdata, imgFile=""):
+def DrawRoc(label, Y, computedY):    
+    fpr = dict()
+    tpr = dict()
+    roc_auc = dict()
+    fpr[0], tpr[0], _ = roc_curve(Y, computedY)
+    roc_auc[0] = auc(fpr[0], tpr[0])
+        
+
+    # Compute micro-average ROC curve and ROC area
+    fpr["micro"], tpr["micro"], _ = roc_curve(Y.ravel(), computedY.ravel())
+    roc_auc["micro"] = auc(fpr["micro"], tpr["micro"])
+    plt.figure()
+    lw = 2
+    plt.plot(fpr[0], tpr[0], color='darkorange', lw=lw, label='ROC curve (area = %0.2f)' % roc_auc[0])
+    plt.plot([0, 1], [0, 1], color='navy', lw=lw, linestyle='--')
+    plt.xlim([0.0, 1.0])
+    plt.ylim([0.0, 1.05])
+    plt.xlabel('False Positive Rate')
+    plt.ylabel('True Positive Rate')
+    plt.title(label)
+    plt.legend(loc="lower right")
+    plt.show()
+
+def RunTraining(classifier, columns, resultCol, trainingData, testdata, title=""):
     training_data_projection = trainingData[columns].values
     target_data_projection = trainingData[resultCol].values
 
@@ -52,7 +75,7 @@ def RunTraining(classifier, columns, resultCol, trainingData, testdata, imgFile=
 
     classifier.fit(training_data_projection, target_data_projection)
     results = classifier.predict(test_data_projection)
-
+    #DrawRoc(title, actual_result_data, results)
     matrix = [0, 0, 0, 0]
     
     for i in range(0, len(results)):
@@ -69,9 +92,9 @@ def RunTraining(classifier, columns, resultCol, trainingData, testdata, imgFile=
     return accuracy, matrix 
 
 
-def RunBernuliClassifier(columns, resultCol, trainingData, testdata, alpha=0):    
+def RunBernuliClassifier(columns, resultCol, trainingData, testdata, alpha=0, title=""):    
     classifier = BernoulliNB(alpha=alpha, binarize=0.0)
-    return RunTraining(classifier, columns, resultCol, trainingData, testdata)
+    return RunTraining(classifier, columns, resultCol, trainingData, testdata, title)
 
 def DoRuns(name, columns, resultCol, trainingData, testdata):
     params = [1, 2, 3]
@@ -79,7 +102,7 @@ def DoRuns(name, columns, resultCol, trainingData, testdata):
     for param in params:
         print("*******************")
         print("With " + str(param) + " alpha smoothing ")
-        run, matrix = RunBernuliClassifier(columns, resultCol, trainingData, testdata, param)
+        run, matrix = RunBernuliClassifier(columns, resultCol, trainingData, testdata, param, name +" with " + str(param) + " alpha smoothing ")
         print("precision: " + str(run))
         print("confusion matrix: ")
         print(str(matrix[0]) + " " + str(matrix[1]))
