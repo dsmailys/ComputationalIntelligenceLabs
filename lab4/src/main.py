@@ -2,7 +2,7 @@
 
 import csv
 import random
-
+import numpy as np
 from CampaignDetails import CampaignDetails
 import Constants
 import pandas as pd
@@ -11,7 +11,9 @@ from sklearn.utils import shuffle
 from sklearn.metrics import accuracy_score
 from sklearn.externals.six import StringIO
 from sklearn.naive_bayes import BernoulliNB
+from sklearn.naive_bayes import MultinomialNB
 from sklearn.metrics import roc_curve, auc
+import scikitplot as skplt
 
 
 def CalculateRatio(data, feature, val1, val2):
@@ -42,6 +44,10 @@ def SplitDataByProportion (data, training_proportion, test_proportion):
 
     testData = data[int(trainingCount):int(totalLength)]
     return trainingData, testData
+
+def DrawLift(label, Y, computedY):
+    skplt.metrics.plot_lift_curve(Y, computedY, title=label)
+    plt.show()
 
 def DrawRoc(label, Y, computedY):    
     fpr = dict()
@@ -76,6 +82,7 @@ def RunTraining(classifier, columns, resultCol, trainingData, testdata, title=""
     classifier.fit(training_data_projection, target_data_projection)
     results = classifier.predict(test_data_projection)
     #DrawRoc(title, actual_result_data, results)
+    DrawLift(title, actual_result_data, classifier.predict_proba(test_data_projection))
     matrix = [0, 0, 0, 0]
     
     for i in range(0, len(results)):
@@ -93,16 +100,21 @@ def RunTraining(classifier, columns, resultCol, trainingData, testdata, title=""
 
 
 def RunBernuliClassifier(columns, resultCol, trainingData, testdata, alpha=0, title=""):    
-    classifier = BernoulliNB(alpha=alpha, binarize=0.0)
+    classifier = BernoulliNB(alpha=alpha, binarize=None)
+    return RunTraining(classifier, columns, resultCol, trainingData, testdata, title)
+
+def RunMultinomialClassifier(columns, resultCol, trainingData, testdata, alpha=0, title=""):    
+    classifier = MultinomialNB(alpha=alpha)
     return RunTraining(classifier, columns, resultCol, trainingData, testdata, title)
 
 def DoRuns(name, columns, resultCol, trainingData, testdata):
-    params = [1, 2, 3]
+    params = [0, 100]
     print(name + ":")
     for param in params:
         print("*******************")
         print("With " + str(param) + " alpha smoothing ")
         run, matrix = RunBernuliClassifier(columns, resultCol, trainingData, testdata, param, name +" with " + str(param) + " alpha smoothing ")
+        #run, matrix = RunMultinomialClassifier(columns, resultCol, trainingData, testdata, param, name +" with " + str(param) + " alpha smoothing ")
         print("precision: " + str(run))
         print("confusion matrix: ")
         print(str(matrix[0]) + " " + str(matrix[1]))
@@ -119,23 +131,39 @@ def CalculateAPrioriProb(feature, data, val):
     positive = len(data.loc[data[feature] == val])
     return float(positive) / dataLen
 
+def CalculateByasProb(feature, target, data, val):
+    target_prob = CalculateAPrioriProb(target, data, val)
+    feature_prob = CalculateAPrioriProb(feature, data, val)
+    target_feature_prob = float(len(data.loc[(data[feature] == val) & (data[target] == val)])) / len(data)
+    feature_target_prob = target_prob * target_feature_prob / feature_prob
+    return target_prob, feature_prob, target_feature_prob, feature_target_prob
+
 def __main__():  
     df = pd.read_csv (Constants.DATA_FILE)
     
     df = shuffle(df)
     training_data, test_data = SplitDataByProportion(df, 90, 10)
 
+    target_prob, feature_prob, target_feature_prob, feature_target_prob = CalculateByasProb('CC_CARD', 'RESP', training_data, 1)
+
     print('Target feature probability: ')
-    print(CalculateAPrioriProb('RESP', training_data, 1))
+    print(target_prob)
 
     print('Credit card holder feature probability: ')
-    print(CalculateAPrioriProb('CC_CARD', training_data, 1))
+    print(feature_prob)
+
+    print('Feature probability to affect target')
+    print(target_feature_prob)
+
+    print('Byas probablity of target feature')
+    print(feature_target_prob)
 
     DoRuns('Categorical features', ['CC_CARD', 'WEB'], 'RESP', training_data, test_data)
-    DoRuns('Numerical', ['derived_RESPONSE_TO_PROMOTION','derived_AVERAGE_SPENT'], 'RESP', training_data, test_data)
-    DoRuns('Mixed', ['derived_RESPONSE_TO_PROMOTION','derived_AVERAGE_SPENT','CC_CARD', 'WEB'], 'RESP', training_data, test_data)
+    #DoRuns('Numerical', ['PROMOS','STYLES', 'DAYS', 'REC'], 'RESP', training_data, test_data)
+    #DoRuns('Mixed', ['derived_RESPONSE_TO_PROMOTION','derived_AVERAGE_SPENT','CC_CARD', 'WEB'], 'RESP', training_data, test_data)
     
 __main__()
 
-# TODO: add ROC chart
-# TODO: fix classier (not sure if Bernuli is the best choise )
+
+# TODO: decide on classifier and tests
+# TODO: finish report
