@@ -81,7 +81,7 @@ def RunTraining(classifier, columns, resultCol, trainingData, testdata, title=""
 
     classifier.fit(training_data_projection, target_data_projection)
     results = classifier.predict(test_data_projection)
-    #DrawRoc(title, actual_result_data, results)
+    DrawRoc(title, actual_result_data, results)
     DrawLift(title, actual_result_data, classifier.predict_proba(test_data_projection))
     matrix = [0, 0, 0, 0]
     
@@ -108,13 +108,13 @@ def RunMultinomialClassifier(columns, resultCol, trainingData, testdata, alpha=0
     return RunTraining(classifier, columns, resultCol, trainingData, testdata, title)
 
 def DoRuns(name, columns, resultCol, trainingData, testdata):
-    params = [0, 100]
+    params = [0, 2, 5, 10]
     print(name + ":")
     for param in params:
         print("*******************")
         print("With " + str(param) + " alpha smoothing ")
-        run, matrix = RunBernuliClassifier(columns, resultCol, trainingData, testdata, param, name +" with " + str(param) + " alpha smoothing ")
-        #run, matrix = RunMultinomialClassifier(columns, resultCol, trainingData, testdata, param, name +" with " + str(param) + " alpha smoothing ")
+        #run, matrix = RunBernuliClassifier(columns, resultCol, trainingData, testdata, param, name +" with " + str(param) + " alpha smoothing ")
+        run, matrix = RunMultinomialClassifier(columns, resultCol, trainingData, testdata, param, name +" with " + str(param) + " alpha smoothing ")
         print("precision: " + str(run))
         print("confusion matrix: ")
         print(str(matrix[0]) + " " + str(matrix[1]))
@@ -140,7 +140,11 @@ def CalculateByasProb(feature, target, data, val):
 
 def __main__():  
     df = pd.read_csv (Constants.DATA_FILE)
-    
+    print("Before drop")
+    CalculateRatio(df, 'RESP', 1, 0)
+    df = Drop(df, 'RESP', 0, 0.7) # drop 55% of rows with 0 RESP
+    print("After drop")
+    CalculateRatio(df, 'RESP', 1, 0)    
     df = shuffle(df)
     training_data, test_data = SplitDataByProportion(df, 90, 10)
 
@@ -160,7 +164,8 @@ def __main__():
 
     DoRuns('Categorical features', ['CC_CARD', 'WEB'], 'RESP', training_data, test_data)
     #DoRuns('Numerical', ['PROMOS','STYLES', 'DAYS', 'REC'], 'RESP', training_data, test_data)
-    #DoRuns('Mixed', ['derived_RESPONSE_TO_PROMOTION','derived_AVERAGE_SPENT','CC_CARD', 'WEB'], 'RESP', training_data, test_data)
+    DoRuns('Mixed', ['derived_RESPONSE_TO_PROMOTION','derived_AVERAGE_SPENT'], 'RESP', training_data, test_data)
+    DoRuns('Mixed', ['derived_RESPONSE_TO_PROMOTION','derived_AVERAGE_SPENT','CC_CARD', 'WEB'], 'RESP', training_data, test_data)
     
 __main__()
 
