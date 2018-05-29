@@ -1,0 +1,7 @@
+Error based learning
+1. Choose the error-based learning model suitable for your dataset
+2. Implement cross validation idea by selecting at least 4 folds. 
+3. Experiment: Select at least two categorical features and at least two continuous features. Perform necessary steps before learning it. Learn the model and write down its formal describtion (equation). Provide predictions for your target feature using test dataset.
+4. Experiment: Select at least 6 features OR all features you have in training dataset. Perform necessary steps before learning it. Learn the model and write down its formal describtion (equation). Provide predictions for your target feature using test dataset.
+5. For each experiment, find F1 score, provide ROC (AUC) curve and make conclusions about the goddness of model to be learned. 
+6. Summarize the results to be obtained.
