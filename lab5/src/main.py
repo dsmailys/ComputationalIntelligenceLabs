@@ -16,6 +16,7 @@ from sklearn.metrics import roc_curve, auc
 from sklearn.model_selection import KFold
 from sklearn import linear_model
 from sklearn.metrics import mean_squared_error, r2_score
+from sklearn.feature_selection import chi2
 # import scikitplot as skplt
 
 
@@ -151,18 +152,47 @@ def TwoCategoricalFeatures(df):
         testDataSetX = df.iloc[test_index][['PROMOS', 'STYLES']]
         
         trainDataSetY = df.iloc[train_index][['RESP']]
-        testDataSetY = df.iloc[test_index][['RESP']]
-        
-        regr = linear_model.LinearRegression()
+        testDataSetY = df.iloc[test_index][['RESP']].values
+
+        scores, pvalues = chi2(trainDataSetX.values, trainDataSetY.values)
+        print(pvalues)
+        regr = linear_model.LogisticRegression()
         regr.fit(trainDataSetX, trainDataSetY)
         prediction = regr.predict(testDataSetX)
 
+        DrawRoc("Roc", testDataSetY, prediction)
+
         print('Coefficients: ', regr.coef_)
+        
         print('Intercept: ', regr.intercept_)
         print("Mean squared error: ", mean_squared_error(testDataSetY, prediction))
         # Explained variance score: 1 is perfect prediction
         print('Variance score: ', r2_score(testDataSetY, prediction))
-        print('********')
+
+        matrix = [0, 0, 0, 0]
+
+        for j in range(0, len(prediction)):
+            if testDataSetY[j] and prediction[j]:
+                matrix[0] = matrix[0] + 1
+            elif testDataSetY[j] and not prediction[j]:
+                matrix[1] = matrix[1] + 1
+            elif not testDataSetY[j] and prediction[j]:
+                matrix[2] = matrix[2] + 1
+            elif not testDataSetY[j] and not prediction[j]:
+                matrix[3] = matrix[3] + 1
+
+        accuracy = accuracy_score(testDataSetY, prediction)*100   
+
+        print("Accuracy: ", accuracy)
+        print("confusion matrix: ")
+        print(str(matrix[0]) + " " + str(matrix[1]))
+        print(str(matrix[2]) + " " + str(matrix[3]))
+        if matrix[0] + matrix[1] > 0 and matrix[0] + matrix[2] > 0:
+            precision = float(matrix[0]) / (matrix[0] + matrix[1])
+            recall = float(matrix[0]) / (matrix[0] + matrix[2])
+            f1 = 2*(precision * recall)/(precision + recall)
+            print("f1: " + str(f1))
+        print ('*********************************')
         
         # Plot outputs
         # plt.scatter(testDataSetX[['PROMOS']], testDataSetY,  color='black')
@@ -187,22 +217,52 @@ def SixFeatures(df):
         testDataSetX = df.iloc[test_index][['PROMOS', 'STYLES', 'DAYS', 'REC', 'CC_CARD', 'WEB']]
         
         trainDataSetY = df.iloc[train_index][['RESP']]
-        testDataSetY = df.iloc[test_index][['RESP']]
-        
-        regr = linear_model.LinearRegression()
+        testDataSetY = df.iloc[test_index][['RESP']].values
+
+        scores, pvalues = chi2(trainDataSetX.values, trainDataSetY.values)
+        # pvalues = ["{0:.7f}".format(x)for x in pvalues]
+        print('pvalues:', pvalues)
+        regr = linear_model.LogisticRegression()
         regr.fit(trainDataSetX, trainDataSetY)
         prediction = regr.predict(testDataSetX)
 
+        DrawRoc("Roc", testDataSetY, prediction)
+
         print('Coefficients: ', regr.coef_)
+        
         print('Intercept: ', regr.intercept_)
         print("Mean squared error: ", mean_squared_error(testDataSetY, prediction))
         # Explained variance score: 1 is perfect prediction
         print('Variance score: ', r2_score(testDataSetY, prediction))
-        print('********')
+
+        matrix = [0, 0, 0, 0]
+
+        for j in range(0, len(prediction)):
+            if testDataSetY[j] and prediction[j]:
+                matrix[0] = matrix[0] + 1
+            elif testDataSetY[j] and not prediction[j]:
+                matrix[1] = matrix[1] + 1
+            elif not testDataSetY[j] and prediction[j]:
+                matrix[2] = matrix[2] + 1
+            elif not testDataSetY[j] and not prediction[j]:
+                matrix[3] = matrix[3] + 1
+
+        accuracy = accuracy_score(testDataSetY, prediction)*100   
+
+        print("Accuracy: ", accuracy)
+        print("confusion matrix: ")
+        print(str(matrix[0]) + " " + str(matrix[1]))
+        print(str(matrix[2]) + " " + str(matrix[3]))
+        if matrix[0] + matrix[1] > 0 and matrix[0] + matrix[2] > 0:
+            precision = float(matrix[0]) / (matrix[0] + matrix[1])
+            recall = float(matrix[0]) / (matrix[0] + matrix[2])
+            f1 = 2*(precision * recall)/(precision + recall)
+            print("f1: " + str(f1))
+        print ('*********************************')
 
 def __main__():
     df = pd.read_csv (Constants.DATA_FILE)
-    TwoCategoricalFeatures(df)
+    # TwoCategoricalFeatures(df)
     SixFeatures(df)
 
 
